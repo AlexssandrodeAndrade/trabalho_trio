@@ -23,12 +23,20 @@ function renderizarTabela() {
         tdPalpite.textContent = item.palpite
 
         const tdAcoes = document.createElement("td")
-        const button = document.createElement("button")
 
-        button.textContent = "Excluir"
-        button.className = "btn btn-sm btn-danger"
-        button.addEventListener("click", () => deletarNumero(item.id))
+        const button = document.createElement("button")
+        button.textContent = "Editar"
+        button.className = "btn btn-sm btn-warning"
+        button.addEventListener("click", () => editarNumero(item.id))
         tdAcoes.appendChild(button)
+
+        const button2 = document.createElement("button")
+        button2.textContent = "Excluir"
+        button2.className = "btn btn-sm btn-danger"
+        button2.addEventListener("click", () => deletarNumero(item.id))
+        tdAcoes.appendChild(button2)
+
+        
 
         tr.appendChild(tdId)
         tr.appendChild(tdJogo)
@@ -38,6 +46,20 @@ function renderizarTabela() {
 
         tbody.appendChild(tr)
     })
+}
+
+let idEdicao = null
+
+function editarNumero(id) {
+    const item = lista.find((palpite) => palpite.id === id)
+    if (!item) return
+    
+    document.getElementById("jogo").value = item.jogo
+    document.getElementById("participante").value = item.participante
+    document.getElementById("palpite").value = item.palpite
+
+    idEdicao = id;
+    document.querySelector("#formBolao button[type='submit']").textContent = "Salvar edição"
 }
 
 async function listarPalpites() {
