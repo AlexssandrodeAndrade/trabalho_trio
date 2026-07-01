@@ -1,22 +1,68 @@
 let lista = [];
 
+function renderizarTabela() {
+    const tbody = document.getElementById("tabelaBolao")
 
-let campo = document.getElementById("campo").value;
-let id = document.getElementById("id").value;
+    if (!tbody) return
 
+    tbody.innerHTML = ""
 
-function listarPalpites() {
-    
+    lista.forEach((item) => {
+        const tr = document.createElement("tr")
+
+        const tdId = document.createElement("td")
+        tdId.textContent = item.id
+
+        const tdJogo = document.createElement("td")
+        tdJogo.textContent = item.jogo
+
+        const tdParticipante = document.createElement("td")
+        tdParticipante.textContent = item.participante
+
+        const tdPalpite = document.createElement("td")
+        tdPalpite.textContent = item.palpite
+
+        const tdAcoes = document.createElement("td")
+
+        const button = document.createElement("button")
+        button.textContent = "Editar"
+        button.className = "btn btn-sm btn-warning"
+        button.addEventListener("click", () => editarNumero(item.id))
+        tdAcoes.appendChild(button)
+
+        const button2 = document.createElement("button")
+        button2.textContent = "Excluir"
+        button2.className = "btn btn-sm btn-danger"
+        button2.addEventListener("click", () => deletarNumero(item.id))
+        tdAcoes.appendChild(button2)
+
+        
+
+        tr.appendChild(tdId)
+        tr.appendChild(tdJogo)
+        tr.appendChild(tdParticipante)
+        tr.appendChild(tdPalpite)
+        tr.appendChild(tdAcoes)
+
+        tbody.appendChild(tr)
+    })
 }
 
-function salvarPapites() {
+let idEdicao = null
+
+function editarNumero(id) {
+    const item = lista.find((palpite) => palpite.id === id)
+    if (!item) return
     
+    document.getElementById("jogo").value = item.jogo
+    document.getElementById("participante").value = item.participante
+    document.getElementById("palpite").value = item.palpite
+
+    idEdicao = id;
+    document.querySelector("#formBolao button[type='submit']").textContent = "Salvar edição"
 }
 
-
-
-
-async function consultarNumero() {
+async function listarPalpites() {
     const resposta = await fetch("/palpites")
     const usuario = await resposta.json()
     console.log(usuario);
