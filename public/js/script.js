@@ -72,9 +72,27 @@ async function listarPalpites() {
 
     lista = await resposta.json()
     renderizarTabela()
+
+    if (!resposta.ok) {
+        console.error("Erro ao carregar palpites", resposta.status)
+        return
+    }
+
+    lista = await resposta.json()
+    renderizarTabela()
 }
 
 async function adicionarNumero() {
+    const jogo = document.getElementById("jogo").value.trim()
+    const participante = document.getElementById("participante").value.trim()
+    const palpite = document.getElementById("palpite").value.trim()
+
+    if (!jogo || !participante || !palpite) {
+        alert("Preencha todos os campos antes de salvar.")
+        return
+    }
+
+    const resposta = await fetch("/palpites", {
     const jogo = document.getElementById("jogo").value.trim()
     const participante = document.getElementById("participante").value.trim()
     const palpite = document.getElementById("palpite").value.trim()
@@ -93,7 +111,29 @@ async function adicionarNumero() {
             jogo,
             participante,
             palpite
+            jogo,
+            participante,
+            palpite
         })
+    })
+
+    if (!resposta.ok) {
+        const erro = await resposta.json()
+        alert(erro.erro)
+        return
+    }
+
+    const novoPalpite = await resposta.json()
+    lista.push(novoPalpite)
+    renderizarTabela()
+    document.getElementById("formBolao").reset()
+}
+
+async function modificarNumero(id) {
+    const jogo = document.getElementById("jogo").value.trim()
+    const participante = document.getElementById("participante").value.trim()
+    const palpite = document.getElementById("palpite").value.trim()
+
     })
 
     if (!resposta.ok) {
@@ -124,10 +164,22 @@ async function modificarNumero(id) {
             palpite
         })
     })
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            jogo,
+            participante,
+            palpite
+        })
+    })
 }
 
 async function deletarNumero(id) {
     if (!confirm("Deseja excluir?")) {
+        return
+    }
         return
     }
 
@@ -137,9 +189,30 @@ async function deletarNumero(id) {
 
     lista = lista.filter((item) => item.id !== id)
     renderizarTabela()
+    await fetch(`/palpites/${id}`, {
+        method: "DELETE"
+    })
+
+    lista = lista.filter((item) => item.id !== id)
+    renderizarTabela()
 }
 
 function limparFormulario() {
+    document.getElementById("formBolao").reset()
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("formBolao")
+
+    if (form) {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault()
+            await adicionarNumero()
+        })
+    }
+
+    listarPalpites()
+})
     document.getElementById("formBolao").reset()
 }
 
